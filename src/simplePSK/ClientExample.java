@@ -14,12 +14,39 @@ import org.bouncycastle.crypto.tls.BasicTlsPSKIdentity;
 import org.bouncycastle.crypto.tls.PSKTlsClient;
 import org.bouncycastle.crypto.tls.TlsClientProtocol;
 
+
 /* 
- * Ein Basic TLS-PSK Client (TCP)
+ * Eine simple TLS-PSK Client(TCP) Implementierung mit Bouncy Castle
+ * 
+ * benötigt wird die hier ein jar-Datei (bcprov-ext-jdk15on-160.jar)
+ * (ist schon im Repository)
+ * Ein BC-Provider muss NICHT extra angemeledet werden.
+ * 
+ * BEACHTE! hierbei handelt es sich um eine LOW LEVEL Tls API von BouncyCastle
+ * Dies macht sich in den mitgelieferten Captures bemerkbar. 
+ * Wireshark erkennt kein TLS Protokoll da der Handshake auf den TCP Sockets 'simuliert wird'.
+ * benutzte Klassen:
+ * 
+ * import org.bouncycastle.crypto.tls.BasicTlsPSKIdentity;
+ * import org.bouncycastle.crypto.tls.PSKTlsClient;
+ * import org.bouncycastle.crypto.tls.TlsClientProtocol;
+ * 
+ * Für eine professionelle Implementierung von TLS (PKI und PSK) sollten
+ * Klassen aus den folgenden beiden packages benutzt werden
+ * 
+ * org.bouncycastle.tls.crypto.impl.bc.*
+ * org.bouncycastle.tls.crypto.impl.jcajce.*
+ * 
+ * hier für wird eine WEITERE jar von BouncyCastle benötigt !!!
+ * 'DTLS/TLS API/JSSE Provider' (bctls-jdk15on-160.jar)
+ *  ---->   https://www.bouncycastle.org/latest_releases.html
+ *  
+ *  weitere Infos im package professionelPSK ...
+ *  
  */
 public class ClientExample
 {
-	public static void main(String[] args) throws IOException,ClassNotFoundException
+	public static void main(String[] args) throws IOException, ClassNotFoundException
 	{
 		// bereite eine Socket vor
 		String host = "localhost";
@@ -42,50 +69,45 @@ public class ClientExample
 		 */
 		BasicTlsPSKIdentity identity = new BasicTlsPSKIdentity("testClient", "password".getBytes());
 
-		
 		/*
 		 * Die Klasse PSKTlsClient erbt von AbstractTlsClient und implementiert
 		 * die Schnittstellen TlsClient und TlsPeer.
 		 * 
-		 * Sie beinhaltet alle wichtigen Daten und liefert Methoden für den
-		 * späteren Schlüsselaustausch.
+		 * Sie beinhaltet alle wichtigen Daten und liefert die Methoden für die
+		 * spätere Authentisierung.
 		 */
 		PSKTlsClient client = new PSKTlsClient(identity);
 
-		
 		/*
 		 * Die Klasse TlsClientProtocol führt den Handshake auf dem Socket auf.
-		 * 
 		 * 
 		 * mit connect(TlsClient) wird der Handshake zum Server ausgestoßen.
 		 */
 		TlsClientProtocol protocol = new TlsClientProtocol(socket.getInputStream(), socket.getOutputStream(),
 				new SecureRandom());
-		
-		
+
 		System.out.println("do handshake");
 		// Handshake wird angestoßen
 		protocol.connect(client);
 		System.out.println("handshake done");
-		
 
 		// Hier kann können jetzt Daten (verschlüsselt) auf den Sockets
 		// übertragen werden ==========================>
 
-		//Wenn Objekte übertragen werden sollen müssen Sie das (Marker)interface Serilizable implementieren
+		// Wenn Objekte übertragen werden sollen müssen die Objectr das
+		// (Marker)Interface Serializable implementieren
 		ObjectOutputStream oos = new ObjectOutputStream(protocol.getOutputStream());
 		ObjectInputStream ois = new ObjectInputStream(protocol.getInputStream());
-		
+
 		String request = "hello i`am a simple client Request !";
 		oos.writeObject(request);
 		oos.flush();
 		System.out.println("send a request to the Server: " + request);
-		
-		//!!! der Methode readObject() ist BLOCKIEREND!!!
-		//Es wird erst weitergemacht wenn wirklich ein reply vom Server kommt
-		String reply = (String)ois.readObject();
+
+		// !!! der Methode readObject() ist BLOCKIEREND!!!
+		// Es wird erst weitergemacht wenn wirklich ein reply vom Server kommt
+		String reply = (String) ois.readObject();
 		System.out.println("got a reply from the server: " + reply);
-		
 
 		// <===============================================
 
@@ -93,11 +115,11 @@ public class ClientExample
 		protocol.close();
 		System.out.println("do quit handshake");
 
-		//stream schließen !
+		// Stream schließen !
 		oos.close();
 		ois.close();
 		System.out.println("close stream´s");
-		
+
 		// Socket schließen !
 		socket.close();
 		System.out.println("close socket");
