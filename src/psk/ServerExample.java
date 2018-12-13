@@ -1,9 +1,13 @@
-package psk;
+/* Author: Tim Schmidt
+ * Date: 13.12.2018 
+ */
 
+package psk;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.SecureRandom;
@@ -18,10 +22,35 @@ public class ServerExample
 	{
 		int port = 55555;
 		ServerSocket serversocket = new ServerSocket(port);
-		System.out.println("open serversocket, wait for clients ...");
+		System.out.println("open serversocket (" + InetAddress.getLocalHost() + ") \nwaiting for clients ...");
 		Socket socket = serversocket.accept();
 
-		PSKTlsServer server = new PSKTlsServer(new Identity());
+		/*
+		 * Der Server braucht keine eigene TlsPskIdentity wie der Client sondern
+		 * einen dazu passenden Manager. Er dient als Wrapperklasse für den PRE
+		 * SHARED KEY
+		 * 
+		 * TlsPSKIdentityManager ist ein Interface und muss daher implementiert
+		 * werden
+		 */
+
+		TlsPSKIdentityManager identityManager = new TlsPSKIdentityManager()
+		{
+
+			@Override
+			public byte[] getPSK(byte[] arg0)
+			{
+				return "password".getBytes();
+			}
+
+			@Override
+			public byte[] getHint()
+			{
+				return "a little hint".getBytes();
+			}
+		};
+
+		PSKTlsServer server = new PSKTlsServer(identityManager);
 
 		TlsServerProtocol protocol = new TlsServerProtocol(socket.getInputStream(), socket.getOutputStream(),
 				new SecureRandom());
@@ -36,8 +65,8 @@ public class ServerExample
 
 		// Wenn Objekte übertragen werden sollen müssen Sie das
 		// (Marker)interface Serilizable implementieren
-		ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+		ObjectOutputStream oos = new ObjectOutputStream(protocol.getOutputStream());
+		ObjectInputStream ois = new ObjectInputStream(protocol.getInputStream());
 
 		// !!! der Methode readObject() ist BLOCKIEREND!!!
 		// Es wird erst weitergemacht wenn wirklich ein request vom Client kommt
@@ -56,21 +85,4 @@ public class ServerExample
 		socket.close();
 		serversocket.close();
 	}
-}
-
-class Identity implements TlsPSKIdentityManager
-{
-
-	@Override
-	public byte[] getHint()
-	{
-		return "???".getBytes();
-	}
-
-	@Override
-	public byte[] getPSK(byte[] arg0)
-	{
-		return "password".getBytes();
-	}
-
 }

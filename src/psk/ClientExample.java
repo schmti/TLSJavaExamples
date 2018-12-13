@@ -1,3 +1,7 @@
+/* Author: Tim Schmidt
+ * Date: 13.12.2018 
+ */
+
 package psk;
 
 import java.io.IOException;
@@ -35,10 +39,6 @@ public class ClientExample
 		 * 
 		 * Die spätere Protokollklasse benötigt die Methode getPSK() um den PRE
 		 * SHARED KEY für den Handshake zu verwenden.
-		 * 
-		 * -->
-		 * https://www.bouncycastle.org/docs/tlsdocs1.5on/org/bouncycastle/tls/
-		 * TlsPSKIdentity.html
 		 */
 
 		BasicTlsPSKIdentity identity = new BasicTlsPSKIdentity("client", "password".getBytes());
@@ -74,8 +74,8 @@ public class ClientExample
 		// übertragen werden ==========================>
 
 		//Wenn Objekte übertragen werden sollen müssen Sie das (Marker)interface Serilizable implementieren
-		ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+		ObjectOutputStream oos = new ObjectOutputStream(protocol.getOutputStream());
+		ObjectInputStream ois = new ObjectInputStream(protocol.getInputStream());
 		
 		String request = "hello i`am a simple client Request !";
 		oos.writeObject(request);
