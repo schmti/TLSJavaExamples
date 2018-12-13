@@ -2,7 +2,7 @@
  * Date: 13.12.2018 
  */
 
-package psk;
+package simplePSK;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,14 +14,14 @@ import org.bouncycastle.crypto.tls.BasicTlsPSKIdentity;
 import org.bouncycastle.crypto.tls.PSKTlsClient;
 import org.bouncycastle.crypto.tls.TlsClientProtocol;
 
-/* Ein Basic TLS-PSK Client.
- * 
+/* 
+ * Ein Basic TLS-PSK Client (TCP)
  */
 public class ClientExample
 {
 	public static void main(String[] args) throws IOException,ClassNotFoundException
 	{
-		// bereite eine SocketVor
+		// bereite eine Socket vor
 		String host = "localhost";
 		int port = 55555;
 		Socket socket = new Socket(host, port);
@@ -40,9 +40,9 @@ public class ClientExample
 		 * Die spätere Protokollklasse benötigt die Methode getPSK() um den PRE
 		 * SHARED KEY für den Handshake zu verwenden.
 		 */
+		BasicTlsPSKIdentity identity = new BasicTlsPSKIdentity("testClient", "password".getBytes());
 
-		BasicTlsPSKIdentity identity = new BasicTlsPSKIdentity("client", "password".getBytes());
-
+		
 		/*
 		 * Die Klasse PSKTlsClient erbt von AbstractTlsClient und implementiert
 		 * die Schnittstellen TlsClient und TlsPeer.
@@ -50,20 +50,19 @@ public class ClientExample
 		 * Sie beinhaltet alle wichtigen Daten und liefert Methoden für den
 		 * späteren Schlüsselaustausch.
 		 */
-
 		PSKTlsClient client = new PSKTlsClient(identity);
 
+		
 		/*
 		 * Die Klasse TlsClientProtocol führt den Handshake auf dem Socket auf.
 		 * 
-		 * Sie besitzten alle wichtigen Methoden (Bsp. sendClientHelloMessage(),
-		 * sendClientKeyExchangeMessage() ...)
 		 * 
 		 * mit connect(TlsClient) wird der Handshake zum Server ausgestoßen.
 		 */
 		TlsClientProtocol protocol = new TlsClientProtocol(socket.getInputStream(), socket.getOutputStream(),
 				new SecureRandom());
-
+		
+		
 		System.out.println("do handshake");
 		// Handshake wird angestoßen
 		protocol.connect(client);

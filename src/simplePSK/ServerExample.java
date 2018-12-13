@@ -2,7 +2,7 @@
  * Date: 13.12.2018 
  */
 
-package psk;
+package simplePSK;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
