@@ -14,16 +14,14 @@ import org.bouncycastle.crypto.tls.BasicTlsPSKIdentity;
 import org.bouncycastle.crypto.tls.PSKTlsClient;
 import org.bouncycastle.crypto.tls.TlsClientProtocol;
 
-
 /* 
- * Eine simple TLS-PSK Client(TCP) Implementierung mit Bouncy Castle
+ * Eine simple TLS-PSK Server(TCP) Implementierung mit Bouncy Castle
  * 
- * benötigt wird die hier ein jar-Datei (bcprov-ext-jdk15on-160.jar)
- * (ist schon eingebunden)
+ * benötigt wird die hier eine jar-Datei (bcprov-ext-jdk15on-160.jar)
+ * (ist schon im Repository)
  * Ein BC-Provider muss NICHT extra angemeledet werden.
  * 
  * BEACHTE! hierbei handelt es sich um eine LOW LEVEL Tls API von BouncyCastle
- * Dies macht sich in den mitgelieferten Captures bemerkbar. 
  * Wireshark erkennt kein TLS Protokoll da der Handshake auf den TCP Sockets 'simuliert wird'.
  * benutzte Klassen:
  * 
@@ -31,17 +29,19 @@ import org.bouncycastle.crypto.tls.TlsClientProtocol;
  * import org.bouncycastle.crypto.tls.PSKTlsClient;
  * import org.bouncycastle.crypto.tls.TlsClientProtocol;
  * 
- * Für eine professionelle Implementierung von TLS (PKI und PSK) sollten
+ * Bouncy Castle hat eine neue Implmentierung für PSK TLS herausgebraucht (2017)
+ * Für die neue Implementierung von TLS (PKI und PSK) sollten
  * Klassen aus den folgenden beiden packages benutzt werden
  * 
  * org.bouncycastle.tls.crypto.impl.bc.*
+ * oder
  * org.bouncycastle.tls.crypto.impl.jcajce.*
  * 
  * hier für wird eine WEITERE jar von BouncyCastle benötigt !!!
  * 'DTLS/TLS API/JSSE Provider' (bctls-jdk15on-160.jar)
  *  ---->   https://www.bouncycastle.org/latest_releases.html
  *  
- *  weitere Infos im package professionelPSK ...
+ *  weitere Infos im package newPSK ...
  *  
  */
 public class ClientExample
