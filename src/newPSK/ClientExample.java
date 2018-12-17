@@ -1,4 +1,4 @@
-package professionelPSK;
+package newPSK;
 
 import java.net.Socket;
 import java.security.SecureRandom;
@@ -13,8 +13,8 @@ public class ClientExample
 {
 	public static void main(String[] args) throws Exception
 	{
-//		Socket s = new Socket("192.168.178.57", 55555);
-		Socket s = new Socket("localhost", 55555);
+		Socket s = new Socket("192.168.178.57", 55555);
+		//Socket s = new Socket("localhost", 55555);
 
 		TlsCrypto crypto = new BcTlsCrypto(new SecureRandom());
 		TlsPSKIdentity identity = new MyTlsPSKIdentiy();

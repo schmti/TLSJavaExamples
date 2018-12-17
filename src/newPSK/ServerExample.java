@@ -1,4 +1,4 @@
-package professionelPSK;
+package newPSK;
 
 import java.net.ServerSocket;
 import java.net.Socket;
