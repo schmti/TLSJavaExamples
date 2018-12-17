@@ -28,7 +28,7 @@ public class ClientExample
 	{
 
 		// bereite eine Socket vor
-		String host = "localhost";
+		String host = "192.168.178.57";
 		int port = 55555;
 		Socket socket = new Socket(host, port);
 		System.out.println("open socket");
