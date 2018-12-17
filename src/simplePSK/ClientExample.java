@@ -19,7 +19,7 @@ import org.bouncycastle.crypto.tls.TlsClientProtocol;
  * Eine simple TLS-PSK Client(TCP) Implementierung mit Bouncy Castle
  * 
  * benötigt wird die hier ein jar-Datei (bcprov-ext-jdk15on-160.jar)
- * (ist schon im Repository)
+ * (ist schon eingebunden)
  * Ein BC-Provider muss NICHT extra angemeledet werden.
  * 
  * BEACHTE! hierbei handelt es sich um eine LOW LEVEL Tls API von BouncyCastle
@@ -94,7 +94,7 @@ public class ClientExample
 		// Hier kann können jetzt Daten (verschlüsselt) auf den Sockets
 		// übertragen werden ==========================>
 
-		// Wenn Objekte übertragen werden sollen müssen die Objectr das
+		// Wenn Objekte übertragen werden sollen müssen die Objecte das
 		// (Marker)Interface Serializable implementieren
 		ObjectOutputStream oos = new ObjectOutputStream(protocol.getOutputStream());
 		ObjectInputStream ois = new ObjectInputStream(protocol.getInputStream());
